@@ -22,13 +22,13 @@ import java.util.List;
 /**
  * Created by eder on 06/02/2015.
  */
-public class CallAPI extends AsyncTask<Void, Void, String> {
+public class CallAPI extends AsyncTask<Void, Void, JSONObject> {
 
         @Override
-        protected String doInBackground(Void... params) {
+        protected JSONObject doInBackground(Void... params) {
 
             //Para el POST
-            String url = "http://192.168.1.207:8000/codigos/newCode/10";
+            String url = "http://192.168.1.211:8000/codigos/newCode/10";
 
             HttpClient client = new DefaultHttpClient();
 
@@ -77,13 +77,14 @@ public class CallAPI extends AsyncTask<Void, Void, String> {
                     JSONObject objeto = new JSONObject(result);
 
                     System.out.println(objeto.getString("description"));
-                    return "";
+                    return objeto;
                 }
             }
             catch (Exception e)
             {
                 e.printStackTrace();
-                return e.getMessage();
+                JSONObject objeto = new JSONObject();
+                return objeto;
             }
 
             //Para un GET
@@ -132,11 +133,12 @@ public class CallAPI extends AsyncTask<Void, Void, String> {
                 return e.getMessage();
             }
         */
-        return "";
+        JSONObject objeto = new JSONObject();
+        return objeto;
 
         }
 
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(JSONObject result) {
             System.out.println(result);
             super.onPostExecute(result);
         }

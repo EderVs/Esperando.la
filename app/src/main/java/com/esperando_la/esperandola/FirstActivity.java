@@ -1,5 +1,7 @@
 package com.esperando_la.esperandola;
 
+import android.app.Application;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
@@ -20,11 +22,20 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -32,7 +43,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
-public class FirstActivity extends ActionBarActivity {
+public class FirstActivity extends ActionBarActivity implements Serializable{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +82,7 @@ public class FirstActivity extends ActionBarActivity {
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragment extends Fragment
+    public class PlaceholderFragment extends Fragment
             implements View.OnClickListener {
 
         public PlaceholderFragment() {
@@ -96,15 +107,18 @@ public class FirstActivity extends ActionBarActivity {
             switch (idClicked_Button) {
                 case R.id.Btn_Play:
                     CallAPI apiRequest = new CallAPI();
-                    String Hola = "";
+                        JSONObject Respuesta;
                     try {
-                        Hola = apiRequest.execute().get();
-                    } catch (InterruptedException e) {
+                        Respuesta = apiRequest.execute().get();
+                        String Ser_res = Serializa(Respuesta);
+                        System.out.println(Ser_res);
+                        Codigos codigoRes = Deserializa();
+                        Toast.makeText(getActivity(), codigoRes.getDescription(), Toast.LENGTH_SHORT).show();
+
+                    } catch (Exception e) {
                         e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
+                        Toast.makeText(getActivity(), "Error", Toast.LENGTH_SHORT).show();
                     }
-                    Toast.makeText(getActivity(), Hola, Toast.LENGTH_SHORT).show();
                     break;
 
                 case R.id.Btn_Codes:
@@ -112,6 +126,52 @@ public class FirstActivity extends ActionBarActivity {
                     break;
             }
         }
+
+        protected String filename = "Codigos";
+
+        public String Serializa(JSONObject a){
+            FileOutputStream fos;
+            Context context = getApplicationContext();
+            try {
+                Codigos codigo = new Codigos(a.getString("_id"), a.getBoolean("status"), a.getString("description"));
+                fos = openFileOutput(filename, Context.MODE_PRIVATE);
+                ObjectOutputStream oos = new ObjectOutputStream(fos);
+                oos.writeObject(codigo);
+                oos.close();
+                return "Correctamente";
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                return "Error: archivo no encontrado";
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+                return "Error";
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return "Error in JSON";
+            }
+        }
+
+        public Codigos Deserializa()
+        {
+            FileInputStream fin;
+            Codigos codigo = null;
+
+            try
+            {
+                fin = openFileInput(filename);
+                ObjectInputStream ois = new ObjectInputStream(fin);
+                codigo = (Codigos) ois.readObject();
+                ois.close();
+                return codigo;
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
     }
 }
 
