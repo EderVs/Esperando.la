@@ -1,4 +1,4 @@
-package com.esperando_la.esperandola;
+package com.esperando_la.esperandola.model;
 
 import java.io.Serializable;
 
@@ -8,14 +8,16 @@ import java.io.Serializable;
 public class Codigos implements Serializable
 {
     private String id;
-    private Boolean status;
+    private int status;
     private String description;
+
+    private String TABLE_NAME = "Codigos";
 
     public Codigos()
     {
     }
 
-    public Codigos(String id, Boolean status, String description)
+    public Codigos(String id, int status, String description)
     {
         super();
         this.id = id;
@@ -33,12 +35,12 @@ public class Codigos implements Serializable
         return this.id;
     }
 
-    public void setStatus(Boolean status)
+    public void setStatus(int status)
     {
         this.status = status;
     }
 
-    public Boolean getStatus()
+    public int getStatus()
     {
         return this.status;
     }

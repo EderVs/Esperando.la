@@ -18,6 +18,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ShowCodesActivity"
+            android:label="Mis Codigos">
+
+       </activity>
+
     </application>
 
 </manifest>

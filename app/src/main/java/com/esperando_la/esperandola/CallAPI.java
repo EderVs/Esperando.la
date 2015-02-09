@@ -28,7 +28,7 @@ public class CallAPI extends AsyncTask<Void, Void, JSONObject> {
         protected JSONObject doInBackground(Void... params) {
 
             //Para el POST
-            String url = "http://192.168.1.211:8000/codigos/newCode/10";
+            String url = "http://192.168.2.7:8000/codigos/newCode/10";
 
             HttpClient client = new DefaultHttpClient();
 

@@ -1,10 +1,9 @@
 package com.esperando_la.esperandola;
 
-import android.app.Application;
-import android.content.Context;
-import android.os.AsyncTask;
+import android.content.ContentValues;
+import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,38 +11,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.os.Build;
 import android.widget.Button;
 import android.widget.Toast;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONException;
+import com.esperando_la.esperandola.Data.SQLHelper;
+import com.esperando_la.esperandola.fragments.CodeDrawerFragment;
+
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 
-public class FirstActivity extends ActionBarActivity implements Serializable{
+public class FirstActivity extends ActionBarActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +34,6 @@ public class FirstActivity extends ActionBarActivity implements Serializable{
                     .commit();
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -109,11 +87,10 @@ public class FirstActivity extends ActionBarActivity implements Serializable{
                     CallAPI apiRequest = new CallAPI();
                         JSONObject Respuesta;
                     try {
+                        SQLHelper DB = new SQLHelper(getApplicationContext());
                         Respuesta = apiRequest.execute().get();
-                        String Ser_res = Serializa(Respuesta);
-                        System.out.println(Ser_res);
-                        Codigos codigoRes = Deserializa();
-                        Toast.makeText(getActivity(), codigoRes.getDescription(), Toast.LENGTH_SHORT).show();
+                        DB.InsertIntoDB(Respuesta.getString("_id"), Respuesta.getString("description"));
+                        Toast.makeText(getActivity(), Respuesta.getString("description"), Toast.LENGTH_SHORT).show();
 
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -122,55 +99,11 @@ public class FirstActivity extends ActionBarActivity implements Serializable{
                     break;
 
                 case R.id.Btn_Codes:
-                    Toast.makeText(getActivity(), "¡Tus códigos!", Toast.LENGTH_SHORT).show();
-                    break;
+                    Intent CodigosIntent = new Intent(getActivity(), ShowCodesActivity.class);
+                    startActivity(CodigosIntent);
             }
         }
 
-        protected String filename = "Codigos";
-
-        public String Serializa(JSONObject a){
-            FileOutputStream fos;
-            Context context = getApplicationContext();
-            try {
-                Codigos codigo = new Codigos(a.getString("_id"), a.getBoolean("status"), a.getString("description"));
-                fos = openFileOutput(filename, Context.MODE_PRIVATE);
-                ObjectOutputStream oos = new ObjectOutputStream(fos);
-                oos.writeObject(codigo);
-                oos.close();
-                return "Correctamente";
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                return "Error: archivo no encontrado";
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-                return "Error";
-            } catch (JSONException e) {
-                e.printStackTrace();
-                return "Error in JSON";
-            }
-        }
-
-        public Codigos Deserializa()
-        {
-            FileInputStream fin;
-            Codigos codigo = null;
-
-            try
-            {
-                fin = openFileInput(filename);
-                ObjectInputStream ois = new ObjectInputStream(fin);
-                codigo = (Codigos) ois.readObject();
-                ois.close();
-                return codigo;
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-                return null;
-            }
-        }
 
     }
 }
