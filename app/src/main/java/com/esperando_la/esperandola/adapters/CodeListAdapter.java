@@ -45,6 +45,7 @@ public class CodeListAdapter extends  RecyclerView.Adapter<CodeListAdapter.MyVie
 
     @Override
     public int getItemCount() {
+
         return codes.size();
     }
 

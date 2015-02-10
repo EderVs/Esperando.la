@@ -6,18 +6,19 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
+//import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
+//import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.util.List;
+//import java.io.UnsupportedEncodingException;
+//import java.util.List;
+import java.util.Random;
 
 /**
  * Created by eder on 06/02/2015.
@@ -27,8 +28,11 @@ public class CallAPI extends AsyncTask<Void, Void, JSONObject> {
         @Override
         protected JSONObject doInBackground(Void... params) {
 
+            Random ran = new Random();
+
+            int descuento = ran.nextInt((50-10)+1)+10;
             //Para el POST
-            String url = "http://192.168.1.17:8000/codigos/newCode/10";
+            String url = "https://esperandola.herokuapp.com/codigos/newCode/"+descuento;
 
             HttpClient client = new DefaultHttpClient();
 
